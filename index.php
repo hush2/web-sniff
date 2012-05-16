@@ -17,8 +17,7 @@ Flight::route('GET /', function() {
 
     // set form defaults
     $request->data->gzip = true;
-    $request->data->url  = 'http://localhost';
-    //$request->data->url  = 'http://www.google.com';
+    $request->data->url  = 'http://www.google.com';
     $request->data->http = '1.1';
     $request->data->type = 'get';
 
@@ -120,7 +119,7 @@ Flight::route('POST /', function() {
 
     $request_headers = str_replace($search, $replace ,$ci['request_header']);
     $data['request_headers'] = $request_headers;
-var_dump($response);
+
     list($header, $body) = explode(CRLF . CRLF, $response, 2);
 
     // Content-Length is not returned when chunked
