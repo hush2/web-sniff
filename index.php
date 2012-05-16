@@ -13,7 +13,7 @@ define('LF', "\n");
 
 Flight::route('GET /', function() {
 
-    // set form defaults
+    // Set form defaults
     $request->data->gzip = true;
     $request->data->url  = 'http://www.google.com';
     $request->data->http = '1.1';
@@ -27,10 +27,11 @@ Flight::route('GET /', function() {
 
 Flight::route('POST /', function() {
 
-    $post = Flight::request()->data;
+    $post = Flight::request()->data;    // $_POST vars
 
     $data['post'] = $post;
 
+    // Strip 'http://' from url for the connect message.
     $url = parse_url($post->url);
     $host = $url['host'];
     if (!$host && isset($url['path'])) {
@@ -38,9 +39,10 @@ Flight::route('POST /', function() {
     }
     $port = isset($url['port']) ? $url['port'] : '80';
 
+    // 'Connect to' message copied from web-sniffer.net :-)
     $data['conn_msg'] = "Connect to " . gethostbyname($host) . " on port $port ... ";
 
-    // User-Agent list taken from web-sniffer.net
+    // The same User-Agent list from web-sniffer.net.
     $ua_list = array('Web-Sniff v1.33.7',
                      'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0)',
                      'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)',
@@ -55,25 +57,26 @@ Flight::route('POST /', function() {
     );
 
     $ua_index = intval($post->ua);
-    if (!isset($ua_list[$ua_index])) {  // check for invalid index
+    // User-Agent not in the list? Use the first user agent.
+    if (!isset($ua_list[$ua_index])) {
         $ua_index = 0;
     }
 
+    // Set the option tag 'selected' attribute.
     $ua = array_fill(0, count($ua_list), '');
     $ua[$ua_index] = 'selected ';
 
-    $data['ua'] = $ua;
+    $data['ua'] = $ua;      // Check view on how this var is used.
 
-    $url = $post->url;
-    $ch = curl_init($url);
+    $ch = curl_init($host);
 
     $curlopts = array(
-        CURLINFO_HEADER_OUT    => true,     // request header
-        CURLOPT_HEADER         => true,     // response header
-        CURLOPT_RETURNTRANSFER => true,
+        CURLINFO_HEADER_OUT    => true,     // Request header
+        CURLOPT_HEADER         => true,     // Response header
+        CURLOPT_RETURNTRANSFER => true,     //
         CURLOPT_MAXREDIRS      => 1,
-        CURLOPT_CONNECTTIMEOUT => 4,        // tcp timeout
-        CURLOPT_TIMEOUT        => 12,       // curl timeout
+        CURLOPT_CONNECTTIMEOUT => 4,        // TCP  timeout
+        CURLOPT_TIMEOUT        => 12,       // CURL timeout
         CURLOPT_USERAGENT      => $ua_list[$ua_index],
 
     );
