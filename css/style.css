@@ -1,0 +1,150 @@
+body {
+	margin-bottom: 10px;
+	font-size: 13px;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+}
+
+p#logo {	
+	padding-bottom: 4px;
+	margin-bottom: 30px;
+	border-bottom: 2px solid #E3E3E3;
+	font-size: 14px;
+	font-weight: bold;	
+	text-align: right;
+    color: #999;    
+}
+
+h1, h2 {
+    color: #CC0000;	
+	margin-left: 15px;	
+}
+
+h1 {
+	font-size: 1.3em;
+}
+
+h2 {
+	font-size: 1.1em;
+}
+
+fieldset {
+	margin: 2px 10px 0px 10px;
+	padding: 15px 10px 15px 10px;
+	border: 1px solid #ccc;
+}
+
+fieldset legend {
+	padding: 2px 10px;
+	color: black;
+	background-color: #CCCCCC;
+	font-size: 0.8em;
+}
+
+fieldset p {
+	margin: 10px;
+}
+
+input.text {
+	border: 1px solid #ccc;
+	background-color: #fffff0;
+	color: black;
+	padding: 1px 3px;
+	margin-left: 5px;
+	margin-right: 5px;
+	
+}
+
+input.url {
+	width: 50%;
+}
+
+input[type="submit"] {
+	background-color: #ccc;
+	color: #000;	 	
+}
+
+table {
+ 	border-width: 1px;
+	border-color: #ddd;
+	border-style: solid;
+ 	padding: 0px; 
+ 	margin: 2px 10px 0px 10px;
+	border-spacing: 0px;
+	width: 95%;
+}
+
+table tr th {	
+	text-align: left;
+	padding: 2px 5px;
+	color: #fff;
+	background-color: #ccc;
+	
+}
+
+table tr td {
+	color: black;
+	text-align: left;
+	padding: 3px 5px;		
+}
+
+table tr td.name {
+	font-weight: bold;
+	white-space: nowrap;
+}
+
+p {
+	margin: 2px 10px 0px 10px;
+}
+
+pre {
+    font-family: "Courier New", Courier, monospace; 	
+ 	padding: 0;	
+ 	margin: 2px 10px 0px 10px;	
+}
+
+pre span {
+ 	display: inline;
+ 	font-family: "Courier New", Courier, monospace;	
+}
+
+pre span.crlf {
+    color: #a9a9a9;
+}
+
+pre span.ctrlchar {
+	color: #a9a9a9;
+}
+
+a {
+	text-decoration: none;
+}
+
+table.tbl tr:nth-child(even) td {
+    background-color: #f0f8ff;
+}
+
+.status {
+    font-size: 1.1em;
+}
+
+/* HTMLColorizer */
+.tagName{color:purple;}
+.tagAttribute{color:red;}
+.tagValue{color:blue;}
+.HTMLComment{font-style:italic;color:green;}
+
+div#html {
+
+font-size: 0.9em;
+/* display: table; */
+margin-left: 10px;
+background-color: #eee;
+border: 1px solid #ddd;		
+
+white-space: pre-wrap;      /* CSS3 */       
+white-space: -moz-pre-wrap; /* Firefox */        
+white-space: -pre-wrap;     /* Opera <7 */       
+white-space: -o-pre-wrap;   /* Opera 7 */        
+
+word-wrap: break-word; 
+}

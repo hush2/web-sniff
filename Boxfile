@@ -1,0 +1,10 @@
+web1:
+  
+  name: web-sniff  
+  
+  document_root: /    
+
+  php_version: 5.3.8 
+
+  php_extensions:
+    - curl
