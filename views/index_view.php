@@ -28,8 +28,8 @@
     <input type='checkbox' <?= $post->raw ? 'checked' : '' ?> name='raw' value='1' /> Raw HTML view
     <input type='checkbox' <?= $post->gzip ? 'checked' : '' ?> name='gzip' value='1' /> Accept-Encoding: gzip |
     Request type:
-    <input type='radio' checked name='type' value='get' /> GET
-    <input type='radio' name='type' value='head' /> HEAD
+    <input type='radio' <?= $post->type == 'get'  ? 'checked' : ''?> name='type' value='get' /> GET
+    <input type='radio' <?= $post->type == 'head' ? 'checked' : ''?> name='type' value='head' /> HEAD
     </p>
     <p>User Agent:
     <select name='ua'>

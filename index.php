@@ -17,8 +17,10 @@ Flight::route('GET /', function() {
 
     // set form defaults
     $request->data->gzip = true;
-    $request->data->url  = 'http://www.google.com';
+    $request->data->url  = 'http://localhost';
+    //$request->data->url  = 'http://www.google.com';
     $request->data->http = '1.1';
+    $request->data->type = 'get';
 
     $data['post'] = $request->data;
 
@@ -83,6 +85,10 @@ Flight::route('POST /', function() {
         curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_0);
     }
 
+    if ($request->data->type == 'head') {
+        curl_setopt($ch, CURLOPT_NOBODY, true);
+    }
+
     $misc_headers = array('Cache-Control: no-cache',
                           //"Referer: http://{$_SERVER['HTTP_HOST']}",
     );
@@ -90,7 +96,6 @@ Flight::route('POST /', function() {
     if ($request->data->gzip) {
         $misc_headers[] = 'Accept-Encoding: gzip';
     }
-
     curl_setopt($ch, CURLOPT_HTTPHEADER, $misc_headers);
 
     $response  = curl_exec($ch);
@@ -115,7 +120,7 @@ Flight::route('POST /', function() {
 
     $request_headers = str_replace($search, $replace ,$ci['request_header']);
     $data['request_headers'] = $request_headers;
-
+var_dump($response);
     list($header, $body) = explode(CRLF . CRLF, $response, 2);
 
     // Content-Length is not returned when chunked
