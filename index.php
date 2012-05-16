@@ -11,8 +11,6 @@ require 'vendor/htmlcolorizer.php';
 define('CRLF', "\r\n");
 define('LF', "\n");
 
-Flight::set('flight.log_errors', true);
-
 Flight::route('GET /', function() {
 
     // set form defaults
@@ -29,11 +27,11 @@ Flight::route('GET /', function() {
 
 Flight::route('POST /', function() {
 
-    $request = Flight::request();
+    $post = Flight::request()->data;
 
-    $data['post'] = $request->data;
+    $data['post'] = $post;
 
-    $url = parse_url($request->data->url);
+    $url = parse_url($post->url);
     $host = $url['host'];
     if (!$host && isset($url['path'])) {
         $host = $url['path'];
@@ -42,6 +40,7 @@ Flight::route('POST /', function() {
 
     $data['conn_msg'] = "Connect to " . gethostbyname($host) . " on port $port ... ";
 
+    // User-Agent list taken from web-sniffer.net
     $ua_list = array('Web-Sniff v1.33.7',
                      'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0)',
                      'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)',
@@ -55,7 +54,7 @@ Flight::route('POST /', function() {
                      '',
     );
 
-    $ua_index = intval($request->data->ua);
+    $ua_index = intval($post->ua);
     if (!isset($ua_list[$ua_index])) {  // check for invalid index
         $ua_index = 0;
     }
@@ -65,7 +64,7 @@ Flight::route('POST /', function() {
 
     $data['ua'] = $ua;
 
-    $url = $request->data->url;
+    $url = $post->url;
     $ch = curl_init($url);
 
     $curlopts = array(
@@ -80,11 +79,11 @@ Flight::route('POST /', function() {
     );
     curl_setopt_array($ch, $curlopts);
 
-    if ($request->data->http == '1.0') {
+    if ($post>http == '1.0') {
         curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_0);
     }
 
-    if ($request->data->type == 'head') {
+    if ($post->type == 'head') {
         curl_setopt($ch, CURLOPT_NOBODY, true);
     }
 
@@ -92,7 +91,7 @@ Flight::route('POST /', function() {
                           //"Referer: http://{$_SERVER['HTTP_HOST']}",
     );
 
-    if ($request->data->gzip) {
+    if ($post->gzip) {
         $misc_headers[] = 'Accept-Encoding: gzip';
     }
     curl_setopt($ch, CURLOPT_HTTPHEADER, $misc_headers);
@@ -143,7 +142,7 @@ Flight::route('POST /', function() {
         $data['content_length'] = formatBytes(strlen($body));
     }
 
-    if ($request->data->raw) {
+    if ($post->raw) {
 
         $body = htmlentities($body);
 
