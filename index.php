@@ -82,7 +82,7 @@ Flight::route('POST /', function() {
     );
     curl_setopt_array($ch, $curlopts);
 
-    if ($post>http == '1.0') {
+    if ($post->http == '1.0') {
         curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_0);
     }
 
@@ -154,7 +154,7 @@ Flight::route('POST /', function() {
         $body    = str_replace($search, $replace, $body);
 
     } else {
-        // highligher is buggy
+        // Highligher is buggy.
         $html = new HTMLcolorizer($body);
         $body = $html->colorize();
     }
@@ -169,4 +169,3 @@ Flight::route('POST /', function() {
 });
 
 Flight::start();
-
