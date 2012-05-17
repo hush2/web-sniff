@@ -4,7 +4,6 @@
 
 require 'vendor/flight/Flight.php';
 
-require 'vendor/gzdecode.php';
 require 'vendor/formatbytes.php';
 require 'vendor/htmlcolorizer.php';
 
@@ -15,7 +14,8 @@ Flight::route('GET /', function() {
 
     // Set form defaults
     $request->data->gzip = true;
-    $request->data->url  = 'http://www.google.com';
+    #$request->data->url  = 'http://www.google.com';
+    $request->data->url  = 'http://localhost';
     $request->data->http = '1.1';
     $request->data->type = 'get';
 
@@ -68,7 +68,8 @@ Flight::route('POST /', function() {
 
     $data['ua'] = $ua;      // Check view on how this var is used.
 
-    $ch = curl_init($host);
+
+    $ch = curl_init($post->url);
 
     $curlopts = array(
         CURLINFO_HEADER_OUT    => true,     // Request header
@@ -90,13 +91,15 @@ Flight::route('POST /', function() {
         curl_setopt($ch, CURLOPT_NOBODY, true);
     }
 
+    // Set additional headers here
     $misc_headers = array('Cache-Control: no-cache',
                           //"Referer: http://{$_SERVER['HTTP_HOST']}",
     );
 
     if ($post->gzip) {
-        $misc_headers[] = 'Accept-Encoding: gzip';
+        curl_setopt($ch, CURLOPT_ENCODING, 'gzip');
     }
+
     curl_setopt($ch, CURLOPT_HTTPHEADER, $misc_headers);
 
     $response  = curl_exec($ch);
@@ -137,13 +140,6 @@ Flight::route('POST /', function() {
         $response_headers[$name] = $value;
     }
     $data['response_headers'] = $response_headers;
-
-    // Decode body if gzipped
-    if (isset($response_headers['Content-Encoding']) &&
-              $response_headers['Content-Encoding'] == 'gzip') {
-        $body = gzdecode($body);
-        $data['content_length'] = formatBytes(strlen($body));
-    }
 
     if ($post->raw) {
 
