@@ -22,14 +22,14 @@
     </p>
     <p>HTTP version:
     <input type='radio' <?= $post->http == '1.1' ? 'checked' : '' ?> name='http' value='1.1' /> HTTP/1.1
-    <input type='radio' <?= $post->http == '1.0' ? 'checked' : '' ?> name='http' value='1.0' /> HTTP/1.0 (with Host header)
-    </p>
+    <input type='radio' <?= $post->http == '1.0' ? 'checked' : '' ?> name='http' value='1.0' /> HTTP/1.0    
+    | Request Type:
+    <input type='radio' <?= $post->type == 'get'  ? 'checked' : ''?> name='type' value='get' /> GET
+    <input type='radio' <?= $post->type == 'head' ? 'checked' : ''?> name='type' value='head' /> HEAD   
     <p>
     <input type='checkbox' <?= $post->raw ? 'checked' : '' ?> name='raw' value='1' /> Raw HTML view
-    <input type='checkbox' <?= $post->gzip ? 'checked' : '' ?> name='gzip' value='1' /> Accept-Encoding: gzip |
-    Request type:
-    <input type='radio' <?= $post->type == 'get'  ? 'checked' : ''?> name='type' value='get' /> GET
-    <input type='radio' <?= $post->type == 'head' ? 'checked' : ''?> name='type' value='head' /> HEAD
+    <input type='checkbox' <?= $post->gzip ? 'checked' : '' ?> name='gzip' value='1' /> Accept-Encoding: gzip
+    <input type='checkbox' <?= $post->redir ? 'checked' : '' ?> name='redir' value='1'> Follow Redirect
     </p>
     <p>User Agent:
     <select name='ua'>

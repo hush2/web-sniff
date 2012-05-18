@@ -12,10 +12,9 @@ define('LF', "\n");
 
 Flight::route('GET /', function() {
 
-    // Set form defaults
+    // Set form defaults.
     $request->data->gzip = true;
-    #$request->data->url  = 'http://www.google.com';
-    $request->data->url  = 'http://localhost';
+    $request->data->url  = 'http://www.google.com';
     $request->data->http = '1.1';
     $request->data->type = 'get';
 
@@ -31,7 +30,7 @@ Flight::route('POST /', function() {
 
     $data['post'] = $post;
 
-    // Strip 'http://' from url for the connect message.
+    // Strip 'http://' from URL.
     $url = parse_url($post->url);
     $host = $url['host'];
     if (!$host && isset($url['path'])) {
@@ -57,7 +56,7 @@ Flight::route('POST /', function() {
     );
 
     $ua_index = intval($post->ua);
-    // User-Agent not in the list? Use the first user agent.
+    // User Agent not in the list? Use the first user agent.
     if (!isset($ua_list[$ua_index])) {
         $ua_index = 0;
     }
@@ -66,8 +65,7 @@ Flight::route('POST /', function() {
     $ua = array_fill(0, count($ua_list), '');
     $ua[$ua_index] = 'selected ';
 
-    $data['ua'] = $ua;      // Check view on how this var is used.
-
+    $data['ua'] = $ua;      // Check index_view on how this var is used.
 
     $ch = curl_init($post->url);
 
@@ -76,7 +74,7 @@ Flight::route('POST /', function() {
         CURLOPT_HEADER         => true,     // Response header
         CURLOPT_RETURNTRANSFER => true,     //
         CURLOPT_MAXREDIRS      => 1,
-        CURLOPT_CONNECTTIMEOUT => 4,        // TCP  timeout
+        CURLOPT_CONNECTTIMEOUT => 6,        // TCP  timeout
         CURLOPT_TIMEOUT        => 12,       // CURL timeout
         CURLOPT_USERAGENT      => $ua_list[$ua_index],
 
@@ -90,15 +88,19 @@ Flight::route('POST /', function() {
     if ($post->type == 'head') {
         curl_setopt($ch, CURLOPT_NOBODY, true);
     }
-
-    // Set additional headers here
-    $misc_headers = array('Cache-Control: no-cache',
-                          //"Referer: http://{$_SERVER['HTTP_HOST']}",
-    );
-
+    // Accept-Encoding: gzip
     if ($post->gzip) {
         curl_setopt($ch, CURLOPT_ENCODING, 'gzip');
     }
+
+    if ($post->redir) {
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    }
+
+    // Set additional headers here.
+    $misc_headers = array('Cache-Control: no-cache',
+                          //"Referer: http://{$_SERVER['HTTP_HOST']}",
+    );
 
     curl_setopt($ch, CURLOPT_HTTPHEADER, $misc_headers);
 
@@ -116,9 +118,9 @@ Flight::route('POST /', function() {
 
     $ci   = curl_getinfo($ch);
 
-    $crlf = "<span class='crlf'>[CRLF]</span>" ;
-    $lf   = "<span class='crlf'>[LF]</span>" ;
-
+    // Show new lines.
+    $crlf    = "<span class='crlf'>[CRLF]</span>" ;
+    $lf      = "<span class='crlf'>[LF]</span>" ;
     $search  = array(CRLF, LF, '[CRLF]');
     $replace = array($crlf, $lf, "[CRLF]\r\n");
 
@@ -127,13 +129,23 @@ Flight::route('POST /', function() {
 
     list($header, $body) = explode(CRLF . CRLF, $response, 2);
 
-    // Content-Length is not returned when chunked
+    // Get the new response header when a page is redirected.
+    if (intval($ci['redirect_count'] > 0)) {
+        list($header, $body) = explode(CRLF . CRLF, $body, 2);
+        $post->url =  $ci['url']; // New URL
+    }
+
+    // Content-Length is not returned when chunked. This is also the
+    // size of the gunzip'd page.
     $data['content_length'] = formatBytes(strlen($body));
 
     $headers = explode(CRLF, $header);
 
+    // HTTP status line.
     $data['response_status'] = array_shift($headers);
 
+    // Convert header string to an array. It is easier to iterate
+    // and insert them in the table.
     $response_headers = array();
     foreach($headers as $header) {
         list($name, $value) = explode(': ', $header);
@@ -143,14 +155,15 @@ Flight::route('POST /', function() {
 
     if ($post->raw) {
 
-        $body = htmlentities($body);
-
+        $body = htmlentities($body);    // Escape...
+        // Show new lines.
         $search  = array(CRLF, LF, '[CRLF]', '[LF]');
         $replace = array($crlf, $lf, "[CRLF]\r\n", "[LF]\n");
         $body    = str_replace($search, $replace, $body);
 
     } else {
-        // Highligher is buggy.
+        // Highligher (from php.net comment section) is buggy. It will
+        // occasinally truncate text.
         $html = new HTMLcolorizer($body);
         $body = $html->colorize();
     }
