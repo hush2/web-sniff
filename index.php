@@ -88,6 +88,7 @@ Flight::route('POST /', function() {
     if ($post->type == 'head') {
         curl_setopt($ch, CURLOPT_NOBODY, true);
     }
+    
     // Accept-Encoding: gzip
     if ($post->gzip) {
         curl_setopt($ch, CURLOPT_ENCODING, 'gzip');
@@ -163,7 +164,7 @@ Flight::route('POST /', function() {
 
     } else {
         // Highligher (from php.net comment section) is buggy. It will
-        // occasinally truncate text.
+        // occasionally truncate text.
         $html = new HTMLcolorizer($body);
         $body = $html->colorize();
     }
