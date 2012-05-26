@@ -29,7 +29,8 @@ Flight::route('POST /', function() {
     $post = Flight::request()->data;    // $_POST vars
 
     $data['post'] = $post;
-
+    $post->url = trim($post->url);
+    
     // Strip 'http://' from URL.
     $url = parse_url($post->url);
     $host = $url['host'];
