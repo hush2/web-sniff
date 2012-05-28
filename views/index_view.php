@@ -17,7 +17,7 @@
     <legend>For more information on HTTP see <a href='rfc/rfc2616.html'>RFC 2616</a></legend>
 
     <p><b>HTTP URL:</b>
-        <input class='text url' name='url' value='<?= $post->url ?>' />
+        <input class='text url' name='url' value='<?= escape($post->url) ?>' />
         <input type='submit' name='submit' value='Submit' />
     </p>
     <p>HTTP version:
@@ -70,8 +70,9 @@
         </tr>
         <?php foreach($response_headers as $name => $value): ?>
             <tr>
-            <td class='name'><?php if ($name == 'Location') { $value = "<a href='$value'>$value</a>"; } ?><?= $name ?></td>
-            <td><?= $value ?></td>
+            <td class='name'><?php if ($name == 'Location') { $value = "<a href='$value'>$value</a>"; } ?>
+                <?= escape($name) ?></td>
+            <td><?= escape($value) ?></td>
             </tr>
         <?php endforeach ?>
     </table>

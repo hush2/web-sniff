@@ -157,7 +157,7 @@ Flight::route('POST /', function() {
 
     if ($post->raw) {
 
-        $body = htmlentities($body);    // Escape...
+        $body = escape($body);
         // Show new lines.
         $search  = array(CRLF, LF, '[CRLF]', '[LF]');
         $replace = array($crlf, $lf, "[CRLF]\r\n", "[LF]\n");
@@ -178,5 +178,10 @@ Flight::route('POST /', function() {
     Flight::render('index_view', $data);
 
 });
+
+function escape($string)
+{
+    return htmlentities($string, ENT_QUOTES, 'UTF-8');
+}
 
 Flight::start();
