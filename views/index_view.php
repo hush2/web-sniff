@@ -22,10 +22,10 @@
     </p>
     <p>HTTP version:
     <input type='radio' <?= $post->http == '1.1' ? 'checked' : '' ?> name='http' value='1.1' /> HTTP/1.1
-    <input type='radio' <?= $post->http == '1.0' ? 'checked' : '' ?> name='http' value='1.0' /> HTTP/1.0    
+    <input type='radio' <?= $post->http == '1.0' ? 'checked' : '' ?> name='http' value='1.0' /> HTTP/1.0
     | Request Type:
     <input type='radio' <?= $post->type == 'get'  ? 'checked' : ''?> name='type' value='get' /> GET
-    <input type='radio' <?= $post->type == 'head' ? 'checked' : ''?> name='type' value='head' /> HEAD   
+    <input type='radio' <?= $post->type == 'head' ? 'checked' : ''?> name='type' value='head' /> HEAD
     <p>
     <input type='checkbox' <?= $post->raw ? 'checked' : '' ?> name='raw' value='1' /> Raw HTML view
     <input type='checkbox' <?= $post->gzip ? 'checked' : '' ?> name='gzip' value='1' /> Accept-Encoding: gzip
@@ -70,9 +70,10 @@
         </tr>
         <?php foreach($response_headers as $name => $value): ?>
             <tr>
-            <td class='name'><?php if ($name == 'Location') { $value = "<a href='$value'>$value</a>"; } ?>
+            <td class='name'><?php if ($name == 'Location') {
+                                       $value = "<a href='$value'>" . escape($value) ."</a>"; } ?>
                 <?= escape($name) ?></td>
-            <td><?= escape($value) ?></td>
+            <td><?= $value ?></td>
             </tr>
         <?php endforeach ?>
     </table>

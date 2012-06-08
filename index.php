@@ -30,7 +30,7 @@ Flight::route('POST /', function() {
 
     $data['post'] = $post;
     $post->url = trim($post->url);
-    
+
     // Strip 'http://' from URL.
     $url = parse_url($post->url);
     $host = $url['host'];
@@ -74,7 +74,7 @@ Flight::route('POST /', function() {
         CURLINFO_HEADER_OUT    => true,     // Request header
         CURLOPT_HEADER         => true,     // Response header
         CURLOPT_RETURNTRANSFER => true,     //
-        CURLOPT_MAXREDIRS      => 1,
+        CURLOPT_MAXREDIRS      => 3,
         CURLOPT_CONNECTTIMEOUT => 6,        // TCP  timeout
         CURLOPT_TIMEOUT        => 12,       // CURL timeout
         CURLOPT_USERAGENT      => $ua_list[$ua_index],
@@ -89,7 +89,7 @@ Flight::route('POST /', function() {
     if ($post->type == 'head') {
         curl_setopt($ch, CURLOPT_NOBODY, true);
     }
-    
+
     // Accept-Encoding: gzip
     if ($post->gzip) {
         curl_setopt($ch, CURLOPT_ENCODING, 'gzip');
@@ -126,16 +126,18 @@ Flight::route('POST /', function() {
     $search  = array(CRLF, LF, '[CRLF]');
     $replace = array($crlf, $lf, "[CRLF]\r\n");
 
-    $request_headers = str_replace($search, $replace ,$ci['request_header']);
+    $request_headers = str_replace($search, $replace , $ci['request_header']);
     $data['request_headers'] = $request_headers;
 
-    list($header, $body) = explode(CRLF . CRLF, $response, 2);
+    $redirect_count = (int) $ci['redirect_count'];
 
-    // Get the new response header when a page is redirected.
-    if (intval($ci['redirect_count'] > 0)) {
-        list($header, $body) = explode(CRLF . CRLF, $body, 2);
-        $post->url =  $ci['url']; // New URL
-    }
+    // When url is redirected, CURL includes all the headers.
+    $response = explode(CRLF . CRLF, $response, 2 + $redirect_count);
+
+    $body   = array_pop($response);
+    $header = array_pop($response);         // Get the last header.
+
+    $post->url = strtolower($ci['url']);   // New URL
 
     // Content-Length is not returned when chunked. This is also the
     // size of the gunzip'd page.
